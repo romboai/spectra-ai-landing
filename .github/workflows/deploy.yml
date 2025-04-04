@@ -13,7 +13,7 @@ permissions:
 # Allow only one concurrent deployment
 concurrency:
   group: "pages"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -25,29 +25,24 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "20"
           cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
-      - name: Install dependencies
-        run: |
-          npm ci
-          npm install -g vite
-      
-      - name: Build
-        run: |
-          npm run build
-        env:
-          NODE_ENV: production
-          # Add any other environment variables your build needs here
-          # VITE_API_URL: ${{ secrets.VITE_API_URL }}
-      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./out
 
   deploy:
     environment:
