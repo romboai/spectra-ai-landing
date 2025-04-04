@@ -21,7 +21,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        uses: bahmutov/npm-install@v2
+        run: npm ci
 
       - name: Build project
         run: npm run build
