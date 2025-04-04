@@ -32,10 +32,9 @@ jobs:
         run: npm install
       
       - name: Build
-        run: npm run build
-        env:
-          NODE_ENV: production
-          VITE_BASE_URL: /landing-ai-agent/
+        run: |
+          export NODE_ENV=production
+          npm run build
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
