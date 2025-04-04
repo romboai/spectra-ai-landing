@@ -13,6 +13,9 @@ npm run dev
 
 # Build for production
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
 ## Deployment
@@ -21,7 +24,7 @@ This project is configured for automatic deployment to GitHub Pages. To deploy:
 
 1. Push your changes to the `main` branch
 2. GitHub Actions will automatically build and deploy the site
-3. The site will be available at `https://[username].github.io/[repository-name]`
+3. The site will be available at `https://[username].github.io/landing-ai-agent`
 
 ## Features
 
@@ -32,7 +35,7 @@ This project is configured for automatic deployment to GitHub Pages. To deploy:
 
 ## Tech Stack
 
-- Next.js
+- Vite
 - React
 - TypeScript
 - Tailwind CSS
