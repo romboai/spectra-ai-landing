@@ -1,5 +1,6 @@
 import React from 'react';
 import SignupForm from './SignupForm';
+import Favicon from './common/Favicon';
 import { FormData } from '../types';
 
 interface HeroSectionProps {
@@ -23,6 +24,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     <section className="relative px-6 lg:px-8 py-24 md:py-32">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
+          <div className="flex justify-center mb-6">
+            <Favicon size={64} />
+          </div>
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-gray-900 mb-4">
             Spectral data analysis. Reimagined.
           </h1>

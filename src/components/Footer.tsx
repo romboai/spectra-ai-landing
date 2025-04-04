@@ -1,11 +1,15 @@
 import React from 'react';
 import { Github, Mail } from 'lucide-react';
+import Favicon from './common/Favicon';
 
 const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t border-gray-200 px-6 py-8">
       <div className="mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center">
-        <div className="text-2xl font-bold mb-4 md:mb-0">SpectraAI</div>
+        <div className="text-2xl font-bold mb-4 md:mb-0 flex items-center">
+          <Favicon size={32} className="mr-2" />
+          SpectraAI
+        </div>
         <div className="flex space-x-6">
           <a href="#" className="text-gray-600 hover:text-gray-900">Privacy Policy</a>
           <a href="mailto:contact@spectraai.ai" className="flex items-center text-gray-600 hover:text-gray-900">
