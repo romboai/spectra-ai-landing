@@ -9,22 +9,13 @@ import {
   MessageCircle,
   BarChart3,
   Sparkles,
-  Star,
   ChevronDown,
   Play,
   Shield,
   Zap,
   Clock,
   Lock,
-  Check,
-  X,
-  Rocket,
-  Users2,
-  ShieldCheck,
-  Award,
-  MessageCircleMore,
-  RefreshCw,
-  ArrowRight
+
 } from 'lucide-react';
 
 // Import the logo
