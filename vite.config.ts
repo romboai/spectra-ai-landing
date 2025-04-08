@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     svgr()
   ],
-  base: '/spectra-ai-landing/',
+  base: '/',
   resolve: {
     alias: {
       '@': '/src',
