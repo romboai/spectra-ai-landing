@@ -10,7 +10,6 @@ import {
   BarChart3,
   Sparkles,
   ChevronDown,
-  Play,
   Shield,
   Zap,
   Clock,
@@ -20,6 +19,8 @@ import {
 
 // Import the logo
 import logo from '@assets/logo.svg';
+// Add this import at the top of the file with other imports
+import peakPickingVideo from '@assets/videos/peak_picking.mov';
 
 const FormComponent: React.FC<{
   actionUrl: string;
@@ -515,14 +516,20 @@ function App() {
             See SpectraAI in Action
           </h2>
           <div className="relative aspect-video max-w-4xl mx-auto rounded-xl overflow-hidden shadow-xl animate-fade-in-up">
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center">
-              <button className="w-20 h-20 bg-white rounded-full flex items-center justify-center group hover:scale-110 transition-transform duration-200">
-                <Play className="w-8 h-8 text-indigo-600 group-hover:text-indigo-700" />
-              </button>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent">
-              <p className="text-white text-lg font-medium">Watch how SpectraAI transforms spectral data analysis</p>
-            </div>
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent pointer-events-none">
+                <p className="text-white text-lg font-medium">Watch how SpectraAI transforms spectral data analysis</p>
+              </div>
+            <video
+              className="w-full h-full object-cover"
+              controls
+              autoPlay={false}
+              playsInline
+              preload="metadata"
+            >
+              <source src={peakPickingVideo} type="video/mp4" />
+              <source src={peakPickingVideo} type="video/quicktime" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </section>
