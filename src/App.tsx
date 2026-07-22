@@ -20,6 +20,8 @@ import {
 
 // Import the logo
 import logo from '@assets/logo.svg';
+// Product demo video
+import peakPickingVideo from '@assets/videos/peak_picking.mov';
 
 const BRAND = 'SpectraAI';
 
@@ -541,6 +543,32 @@ function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Video Section */}
+      <section className="px-6 py-20 bg-gradient-to-b from-slate-50 to-white">
+        <div className="mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in text-slate-900">
+              See it in action
+            </h2>
+            <p className="text-lg text-slate-600 max-w-2xl mx-auto animate-fade-in-up">
+              From raw spectrum to explainable candidates — watch the agent reason through a real case.
+            </p>
+          </div>
+          <div className="relative aspect-video rounded-xl overflow-hidden shadow-xl border border-slate-200 animate-fade-in-up">
+            <video
+              className="w-full h-full object-cover"
+              controls
+              playsInline
+              preload="metadata"
+            >
+              <source src={peakPickingVideo} type="video/mp4" />
+              <source src={peakPickingVideo} type="video/quicktime" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </section>
