@@ -1,26 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Microscope, 
-  Users, 
+import {
   Github,
   Mail,
   CheckCircle2,
-  FileUp,
-  MessageCircle,
-  BarChart3,
-  Sparkles,
   ChevronDown,
-  Shield,
-  Zap,
   Clock,
-  Lock,
-
+  Search,
+  Eye,
+  FlaskConical,
+  Layers,
+  ScanLine,
+  GitCompare,
+  Workflow,
+  Target,
+  ShieldCheck,
+  Database,
+  FileCheck2,
 } from 'lucide-react';
 
 // Import the logo
 import logo from '@assets/logo.svg';
-// Add this import at the top of the file with other imports
-import peakPickingVideo from '@assets/videos/peak_picking.mov';
+
+const BRAND = 'SpectraAI';
+
+// KPI / product metrics — easily editable values here
+const KPIS: { value: string; label: string; description: string }[] = [
+  {
+    value: '82%',
+    label: 'Top-1 Accuracy',
+    description: 'The correct candidate ranked first across our benchmarks.'
+  },
+  {
+    value: '97%',
+    label: 'Top-10 Accuracy',
+    description: 'The correct candidate within the top ten results.'
+  },
+  {
+    value: '<30 sec',
+    label: 'Average Identification Time',
+    description: 'From raw spectrum to an explainable shortlist.'
+  },
+  {
+    value: '21+',
+    label: 'Chemical Classes',
+    description: 'Chemical classes covered by the identification models.'
+  },
+  {
+    value: '100%',
+    label: 'Explainable Results',
+    description: 'Every result with an evidence score, assignments and traceable logs.'
+  },
+  {
+    value: '94M+',
+    label: 'Retrieval Space',
+    description: 'Molecules searchable across experimental and simulated libraries.'
+  }
+];
 
 const FormComponent: React.FC<{
   actionUrl: string;
@@ -34,7 +69,7 @@ const FormComponent: React.FC<{
       <input
         type="text"
         name="name"
-        placeholder="Your name"
+        placeholder="Full name"
         className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:border-indigo-300"
         value={formData.name}
         onChange={handleInputChange}
@@ -46,7 +81,7 @@ const FormComponent: React.FC<{
       <input
         type="email"
         name="email"
-        placeholder="Your email"
+        placeholder="Work email"
         className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:border-indigo-300"
         value={formData.email}
         onChange={handleInputChange}
@@ -65,9 +100,12 @@ const FormComponent: React.FC<{
           Submitting...
         </span>
       ) : (
-        'Get Free Early Access'
+        'Request a demo'
       )}
     </button>
+    <p className="text-xs text-slate-500 text-center">
+      Or evaluate a pilot on your own data. No spam — we'll reach out to you.
+    </p>
     {error && <p className="text-red-600 text-sm animate-fade-in">{error}</p>}
   </form>
 );
@@ -84,12 +122,13 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  
+
   // Add refs for each section
   const sections = {
     hero: useRef<HTMLElement>(null),
-    features: useRef<HTMLElement>(null),
+    problem: useRef<HTMLElement>(null),
     'how-it-works': useRef<HTMLElement>(null),
+    features: useRef<HTMLElement>(null),
     beta: useRef<HTMLElement>(null)
   };
 
@@ -146,7 +185,7 @@ function App() {
   useEffect(() => {
     let timeout: NodeJS.Timeout;
     if (success) {
-      setSuccessMessage('Thank you for joining our beta program! We will contact you soon.');
+      setSuccessMessage('Thanks! We will reach out shortly to set up your demo or pilot.');
       timeout = setTimeout(() => {
         setSuccess(false);
         setSuccessMessage('');
@@ -183,10 +222,9 @@ function App() {
     setError(null);
     console.log('Form submitted with data:', formData);
     setSuccess(true);
-    setSuccessMessage('Thank you for joining our beta program! We will contact you soon.');
+    setSuccessMessage('Thanks! We will reach out shortly to set up your demo or pilot.');
     setFormData({ name: '', email: '' });
     setIsSubmitting(false);
-
   };
 
   if (!isLoaded) {
@@ -203,46 +241,53 @@ function App() {
       <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <div className="flex items-center justify-between">
-            <div 
+            <div
               className="flex items-center cursor-pointer hover:opacity-80 transition-opacity duration-200"
               onClick={scrollToTop}
             >
-              <img src={logo} alt="SpectraAI Logo" className="h-8 w-auto" />
-              <span className="ml-2 text-xl font-bold text-slate-800">SpectraAI</span>
+              <img src={logo} alt={`${BRAND} Logo`} className="h-8 w-auto" />
+              <span className="ml-2 text-xl font-bold text-slate-800">{BRAND}</span>
             </div>
-            <div className="flex items-center space-x-6">
-              <a 
-                href="#features" 
+            <div className="hidden md:flex items-center space-x-6">
+              <a
+                href="#problem"
+                onClick={(e) => scrollToSection(e, 'problem')}
+                className={`text-slate-600 hover:text-indigo-600 transition-all duration-200 relative ${
+                  activeSection === 'problem'
+                    ? 'text-indigo-600 font-medium after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:rounded-full'
+                    : 'hover:after:absolute hover:after:bottom-[-8px] hover:after:left-0 hover:after:w-full hover:after:h-0.5 hover:after:bg-indigo-600/50 hover:after:rounded-full'
+                }`}
+              >
+                The problem
+              </a>
+              <a
+                href="#how-it-works"
+                onClick={(e) => scrollToSection(e, 'how-it-works')}
+                className={`text-slate-600 hover:text-indigo-600 transition-all duration-200 relative ${
+                  activeSection === 'how-it-works'
+                    ? 'text-indigo-600 font-medium after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:rounded-full'
+                    : 'hover:after:absolute hover:after:bottom-[-8px] hover:after:left-0 hover:after:w-full hover:after:h-0.5 hover:after:bg-indigo-600/50 hover:after:rounded-full'
+                }`}
+              >
+                How it works
+              </a>
+              <a
+                href="#features"
                 onClick={(e) => scrollToSection(e, 'features')}
                 className={`text-slate-600 hover:text-indigo-600 transition-all duration-200 relative ${
-                  activeSection === 'features' 
-                    ? 'text-indigo-600 font-medium after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:rounded-full' 
+                  activeSection === 'features'
+                    ? 'text-indigo-600 font-medium after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:rounded-full'
                     : 'hover:after:absolute hover:after:bottom-[-8px] hover:after:left-0 hover:after:w-full hover:after:h-0.5 hover:after:bg-indigo-600/50 hover:after:rounded-full'
                 }`}
               >
                 Features
               </a>
-              <a 
-                href="#how-it-works" 
-                onClick={(e) => scrollToSection(e, 'how-it-works')}
-                className={`text-slate-600 hover:text-indigo-600 transition-all duration-200 relative ${
-                  activeSection === 'how-it-works' 
-                    ? 'text-indigo-600 font-medium after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:rounded-full' 
-                    : 'hover:after:absolute hover:after:bottom-[-8px] hover:after:left-0 hover:after:w-full hover:after:h-0.5 hover:after:bg-indigo-600/50 hover:after:rounded-full'
-                }`}
+              <a
+                href="#beta"
+                onClick={(e) => scrollToSection(e, 'beta')}
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors duration-200"
               >
-                How It Works
-              </a>
-              <a 
-                href="#hero" 
-                onClick={(e) => scrollToSection(e, 'hero')}
-                className={`text-slate-600 hover:text-indigo-600 transition-all duration-200 relative ${
-                  activeSection === 'beta' 
-                    ? 'text-indigo-600 font-medium after:absolute after:bottom-[-8px] after:left-0 after:w-full after:h-0.5 after:bg-indigo-600 after:rounded-full' 
-                    : 'hover:after:absolute hover:after:bottom-[-8px] hover:after:left-0 hover:after:w-full hover:after:h-0.5 hover:after:bg-indigo-600/50 hover:after:rounded-full'
-                }`}
-              >
-                Join Beta
+                Request a demo
               </a>
             </div>
           </div>
@@ -250,24 +295,46 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <section id="hero" ref={sections.hero} className="relative px-6 lg:px-8 pt-32 pb-24 md:py-32 overflow-hidden">
+      <section id="hero" ref={sections.hero} className="relative px-6 lg:px-8 pt-32 pb-24 md:py-40 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-purple-50 opacity-50"></div>
-        <div className="mx-auto max-w-7xl relative">
+        <div className="mx-auto max-w-5xl relative">
           <div className="text-center">
-            <div className="flex justify-center mb-8">
-              <img src={logo} alt="SpectraAI Logo" className="h-16 w-auto" />
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-8 rounded-full bg-white border border-slate-200 shadow-sm animate-fade-in">
+              <FlaskConical className="w-4 h-4 text-indigo-600" />
+              <span className="text-sm font-medium text-slate-700">Scientific agent for NMR compound identification</span>
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 mb-4 animate-fade-in">
-              Spectral data analysis. Reimagined.
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-slate-900 mb-6 animate-fade-in">
+              From NMR spectrum to molecular identity, with traceable evidence.
             </h1>
-            <p className="text-xl md:text-2xl text-slate-600 mb-8 animate-fade-in-up">
-              Upload. Ask. Analyze. All via chat. No code needed.
+            <p className="text-lg md:text-2xl text-slate-600 mb-10 max-w-3xl mx-auto animate-fade-in-up">
+              A scientific agent for compound identification that combines large-scale retrieval,
+              foundation models, physics-guided validation and step-by-step reasoning to reduce
+              uncertainty and accelerate verification, dereplication and unknown identification.
             </p>
-            <div className="max-w-2xl mx-auto mb-8 animate-fade-in-up">
-              <p className="text-lg text-slate-600">
-                Transform your spectral data analysis workflow with AI-powered chat. Simply upload your spectra and ask questions in plain English. Get instant insights without writing a single line of code.
-              </p>
+
+            {/* Three above-the-fold benefits */}
+            <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto mb-12 animate-fade-in-up">
+              {[
+                {
+                  icon: <Clock className="w-5 h-5 text-indigo-600" />,
+                  text: 'Cut the time lost between spectra, libraries and separate software.'
+                },
+                {
+                  icon: <Eye className="w-5 h-5 text-indigo-600" />,
+                  text: 'Understand what truly supports each candidate and what stays ambiguous.'
+                },
+                {
+                  icon: <Target className="w-5 h-5 text-indigo-600" />,
+                  text: 'Find the next most useful experiment before acquiring useless data.'
+                }
+              ].map((b, i) => (
+                <div key={i} className="flex items-start gap-3 text-left bg-white/70 border border-slate-200 rounded-xl p-4">
+                  <div className="bg-indigo-50 p-2 rounded-lg shrink-0">{b.icon}</div>
+                  <span className="text-sm text-slate-700">{b.text}</span>
+                </div>
+              ))}
             </div>
+
             {!success ? (
               <FormComponent
                 actionUrl="https://app.99inbound.com/api/e/PxRbnqEW"
@@ -282,158 +349,133 @@ function App() {
                   <div className="flex items-center justify-center mb-4">
                     <CheckCircle2 className="w-12 h-12 text-green-600" />
                   </div>
-                  <h3 className="text-xl font-semibold text-green-800 mb-2">Thank You!</h3>
+                  <h3 className="text-xl font-semibold text-green-800 mb-2">Thank you!</h3>
                   <p className="text-green-700">{successMessage}</p>
                 </div>
               </div>
             )}
-            <div className="flex flex-wrap justify-center gap-6 mt-8 animate-fade-in-up">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-                <span className="text-sm text-slate-600">Open source core</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-                <span className="text-sm text-slate-600">No spam</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-                <span className="text-sm text-slate-600">Forever free for early users</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Problem Section */}
-      <section id="features" ref={sections.features} className="bg-white px-6 py-16 shadow-sm">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-8 animate-fade-in text-slate-900">
-            The Future of Spectral Analysis is Here
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="p-6 rounded-xl bg-slate-50 animate-fade-in-up">
-              <h3 className="text-xl font-semibold mb-4 text-slate-800">Traditional Analysis</h3>
-              <ul className="space-y-2 text-slate-600">
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">✕</span>
-                  Complex software with steep learning curves
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">✕</span>
-                  Time-consuming manual processing
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">✕</span>
-                  Requires programming knowledge
-                </li>
-                <li className="flex items-start">
-                  <span className="text-red-500 mr-2">✕</span>
-                  Expensive licenses and maintenance
-                </li>
-              </ul>
-            </div>
-            <div className="p-6 rounded-xl bg-indigo-50 animate-fade-in-up">
-              <h3 className="text-xl font-semibold mb-4 text-slate-800">SpectraAI Analysis</h3>
-              <ul className="space-y-2 text-slate-600">
-                <li className="flex items-start">
-                  <span className="text-indigo-600 mr-2">✓</span>
-                  Natural language interface
-                </li>
-                <li className="flex items-start">
-                  <span className="text-indigo-600 mr-2">✓</span>
-                  Instant analysis and insights
-                </li>
-                <li className="flex items-start">
-                  <span className="text-indigo-600 mr-2">✓</span>
-                  No coding required
-                </li>
-                <li className="flex items-start">
-                  <span className="text-indigo-600 mr-2">✓</span>
-                  Affordable and accessible
-                </li>
-              </ul>
-            </div>
+      {/* KPI Section */}
+      <section className="bg-white px-6 py-20 shadow-sm border-t border-slate-100">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in text-slate-900">
+              Measurable results, not promises
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto animate-fade-in-up">
+              Performance validated on public benchmarks and blind lab sets, with explainable
+              evidence on every result.
+            </p>
           </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" ref={sections['how-it-works']} className="px-6 py-16 bg-gradient-to-b from-white to-slate-50">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12 animate-fade-in text-slate-900">
-            How It Works
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <FileUp className="w-12 h-12 text-indigo-600" />,
-                title: "Upload Your Data",
-                description: "Simply drag and drop your spectral data files. We support all major formats including .spc, .dpt, .jdx, and more."
-              },
-              {
-                icon: <MessageCircle className="w-12 h-12 text-indigo-600" />,
-                title: "Ask Questions",
-                description: "Use natural language to ask questions about your data. No technical jargon needed."
-              },
-              {
-                icon: <BarChart3 className="w-12 h-12 text-indigo-600" />,
-                title: "Get Insights",
-                description: "Receive instant analysis, visualizations, and explanations in plain English."
-              }
-            ].map((feature, index) => (
-              <div 
-                key={index} 
-                className="p-8 rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {KPIS.map((kpi, index) => (
+              <div
+                key={index}
+                className="text-center p-8 rounded-2xl bg-gradient-to-b from-indigo-50 to-white border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in-up"
+                style={{ animationDelay: `${index * 80}ms` }}
               >
-                <div className="bg-indigo-50 p-4 rounded-lg w-fit mb-6">
-                  {feature.icon}
+                <div className="text-5xl md:text-6xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-3">
+                  {kpi.value}
                 </div>
-                <h3 className="text-xl font-semibold mt-4 mb-3 text-slate-800">{feature.title}</h3>
-                <p className="text-slate-600">{feature.description}</p>
+                <h3 className="text-lg font-semibold text-slate-800 mb-2">{kpi.label}</h3>
+                <p className="text-sm text-slate-600">{kpi.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Perfect For Section */}
-      <section className="bg-white px-6 py-16 shadow-sm">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12 animate-fade-in text-slate-900">
-            Perfect For
+      {/* Problem Section */}
+      <section id="problem" ref={sections.problem} className="bg-white px-6 py-20 shadow-sm">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 animate-fade-in text-slate-900">
+            The problem isn't getting candidates. It's reaching a defensible conclusion.
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <p className="text-lg text-slate-600 mb-10 max-w-3xl mx-auto animate-fade-in-up">
+            Today's tools are good at processing data, matching libraries or accelerating
+            verification. But when the sample is a mixture, the compound is unexpected, the spectrum
+            is ambiguous or regulatory evidence is required, the work goes back to the expert. That's
+            where the bottleneck reopens.
+          </p>
+          <div className="max-w-3xl mx-auto mb-6 text-left bg-indigo-50/60 border-l-4 border-indigo-500 rounded-r-xl p-6 animate-fade-in-up">
+            <p className="text-lg text-slate-700 italic leading-relaxed">
+              It's not about replacing chemists. It's about catching the mistake a tired analyst makes
+              at 2 a.m. — on their fourth spectrum of the night, when they just want to go home. That's
+              where an evidence-driven second pair of eyes saves real time and prevents costly errors.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" ref={sections['how-it-works']} className="px-6 py-20 bg-gradient-to-b from-white to-slate-50">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in text-slate-900">
+              An agentic workflow, step by step
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto animate-fade-in-up">
+              The system classifies the case, checks data quality, separates components, searches for
+              candidates and analogs, validates every hypothesis against the real spectrum and produces
+              a readable evidence score. If residual uncertainty is still high, it suggests the next
+              most informative experiment.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                icon: <Microscope className="w-12 h-12 text-indigo-600" />,
-                title: "Research Scientists",
-                description: "Accelerate your research with instant spectral analysis and pattern recognition."
+                icon: <Workflow className="w-7 h-7 text-indigo-600" />,
+                step: '01',
+                title: 'Smart case triage',
+                description: 'Understands whether you\'re doing verification, dereplication, impurity ID or de novo, and sets the right path.'
               },
               {
-                icon: <Users className="w-12 h-12 text-indigo-600" />,
-                title: "Lab Technicians",
-                description: "Streamline routine analysis and reporting with simple chat commands."
+                icon: <ShieldCheck className="w-7 h-7 text-indigo-600" />,
+                step: '02',
+                title: 'Quality & preprocessing guardrails',
+                description: 'Stops baseline, referencing or peak-extraction errors before they become wrong conclusions.'
               },
               {
-                icon: <Sparkles className="w-12 h-12 text-indigo-600" />,
-                title: "Data Analysts",
-                description: "Focus on insights rather than coding with our AI-powered analysis tools."
+                icon: <Layers className="w-7 h-7 text-indigo-600" />,
+                step: '03',
+                title: 'Mixture componentization',
+                description: 'Separates components, solvents and unexplained signals where a "one compound only" ranking would fail.'
+              },
+              {
+                icon: <Search className="w-7 h-7 text-indigo-600" />,
+                step: '04',
+                title: 'Hybrid retrieval',
+                description: 'Searches experimental, simulated and customer-private databases: not just exact matches, but analogs and fragments.'
+              },
+              {
+                icon: <GitCompare className="w-7 h-7 text-indigo-600" />,
+                step: '05',
+                title: 'Candidate generation + forward validation',
+                description: 'Every candidate must regenerate the observed data with physics-guided validation.'
+              },
+              {
+                icon: <Target className="w-7 h-7 text-indigo-600" />,
+                step: '06',
+                title: 'Evidence score & next-best experiment',
+                description: 'Calibrated confidence, unexplained signals and a suggestion of the most informative experiment to acquire next.'
               }
-            ].map((user, index) => (
-              <div 
-                key={index} 
-                className="text-center p-8 rounded-xl bg-slate-50 hover:bg-white transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 animate-fade-in-up border border-slate-100"
+                style={{ animationDelay: `${index * 80}ms` }}
               >
-                <div className="flex justify-center mb-6">
-                  <div className="bg-indigo-50 p-4 rounded-full">
-                    {user.icon}
+                <div className="flex items-center justify-between mb-5">
+                  <div className="bg-indigo-50 p-3 rounded-lg w-fit">
+                    {feature.icon}
                   </div>
+                  <span className="text-2xl font-bold text-slate-200">{feature.step}</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-slate-800">{user.title}</h3>
-                <p className="text-slate-600">{user.description}</p>
+                <h3 className="text-lg font-semibold mb-2 text-slate-800">{feature.title}</h3>
+                <p className="text-slate-600 text-sm">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -441,161 +483,134 @@ function App() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16">Shape the Future of Spectroscopy</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
+      <section id="features" ref={sections.features} className="bg-white px-6 py-20 shadow-sm">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in text-slate-900">
+              Not just candidates: confidence, context and the next experiment
+            </h2>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto animate-fade-in-up">
+              We unify what's separate today: vendor workflows, large-scale retrieval, foundation
+              models, physics-guided validation and enterprise trust.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              {
+                icon: <ScanLine className="w-6 h-6 text-indigo-600" />,
+                title: 'Reads the spectrum, not just the peak list',
+                description: 'Uses foundation encoders on raw 1D/2D signals together with retrieval and physicochemical constraints, so no useful information is lost early on.'
+              },
+              {
+                icon: <Search className="w-6 h-6 text-indigo-600" />,
+                title: 'Searches beyond the library',
+                description: 'It\'s not limited to exact matches: it retrieves analogs, fragments, plausible scaffolds and the lab\'s private candidates.'
+              },
+              {
+                icon: <BarChartIcon />,
+                title: 'Explains why a candidate rises or falls',
+                description: 'Every proposal shows the contribution of ¹H, ¹³C, HSQC, formula/MS context, unexplained signals and residual contradictions.'
+              },
+              {
+                icon: <Target className="w-6 h-6 text-indigo-600" />,
+                title: 'Tells you what to do next',
+                description: 'When data isn\'t enough, it suggests the experiment that maximizes information value instead of piling up spectra "just in case".'
+              },
+              {
+                icon: <Database className="w-6 h-6 text-indigo-600" />,
+                title: 'Fits the real lab',
+                description: 'Vendor-agnostic import, customer proprietary libraries, exportable reports, audit trail and a regulated-ready roadmap.'
+              },
+              {
+                icon: <FileCheck2 className="w-6 h-6 text-indigo-600" />,
+                title: 'Auditable evidence report',
+                description: 'Every proposal comes with assignments, per-evidence scores, decision logs and model/dataset versions.'
+              }
+            ].map((feature, index) => (
+              <div
+                key={index}
+                className="flex gap-5 p-6 rounded-xl bg-slate-50 border border-slate-100 hover:border-indigo-200 hover:bg-white transition-all duration-300 animate-fade-in-up"
+                style={{ animationDelay: `${index * 80}ms` }}
+              >
+                <div className="bg-indigo-50 p-3 rounded-lg w-fit h-fit shrink-0">
+                  {feature.icon}
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 text-slate-800">{feature.title}</h3>
+                  <p className="text-slate-600 text-sm">{feature.description}</p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4">Multi-Format Support</h3>
-              <p className="text-gray-600">Support for over 50+ file formats including CSV, TXT, SPC, JDX, and proprietary instrument formats. Import and export data with multiple columns and metadata.</p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Advanced Plotting</h3>
-              <p className="text-gray-600">Interactive plots with zoom, pan, and data point selection. Support for multiple plot types including line, scatter, waterfall, and 3D surface plots with customizable colors and styles.</p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Data Processing</h3>
-              <p className="text-gray-600">Comprehensive analysis tools including peak finding, baseline correction, smoothing, normalization, and mathematical operations. Support for advanced processing like derivatives and spectral transformations.</p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Export & Sharing</h3>
-              <p className="text-gray-600">Export data and plots in various formats including CSV, PNG, PDF, and SVG. Share your analysis with colleagues through multiple export options and clipboard integration.</p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Batch Processing</h3>
-              <p className="text-gray-600">Process multiple files simultaneously with batch operations. Apply the same analysis to multiple datasets efficiently with automated workflows and customizable processing sequences.</p>
-            </div>
-
-            <div className="bg-white p-8 rounded-lg shadow-lg border border-gray-100">
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-4">Python Integration</h3>
-              <p className="text-gray-600">Extend functionality with custom Python scripts. Automate repetitive tasks and create custom analysis workflows with full Python support for advanced data processing.</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-
-      {/* Demo Video Section */}
-      <section className="px-6 py-16 bg-gradient-to-b from-white to-slate-50">
-        <div className="mx-auto max-w-7xl">
-          <h2 className="text-3xl font-bold text-center mb-12 animate-fade-in text-slate-900">
-            See SpectraAI in Action
-          </h2>
-          <div className="relative aspect-video max-w-4xl mx-auto rounded-xl overflow-hidden shadow-xl animate-fade-in-up">
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/50 to-transparent pointer-events-none">
-                <p className="text-white text-lg font-medium">Watch how SpectraAI transforms spectral data analysis</p>
-              </div>
-            <video
-              className="w-full h-full object-cover"
-              controls
-              autoPlay={false}
-              playsInline
-              preload="metadata"
-            >
-              <source src={peakPickingVideo} type="video/mp4" />
-              <source src={peakPickingVideo} type="video/quicktime" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-      </section>
-
-
-      {/* Enhanced FAQ Section */}
-      <section className="px-6 py-16 bg-white">
+      {/* FAQ Section */}
+      <section className="px-6 py-20 bg-gradient-to-b from-white to-slate-50">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-bold text-center mb-12 animate-fade-in text-slate-900">
-            Frequently Asked Questions
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 animate-fade-in text-slate-900">
+            Frequently asked questions
           </h2>
           <div className="space-y-4">
             {[
               {
-                question: "What types of spectral data can I analyze?",
-                answer: "SpectraAI supports various spectral data formats including IR, Raman, UV-Vis, and NMR spectra. We're continuously adding support for more formats.",
-                icon: <FileUp className="w-5 h-5 text-indigo-600" />
+                question: 'What exactly does the product do?',
+                answer: 'It guides the lab from NMR data to an explainable shortlist of molecular identities, with a confidence score, assignments, unexplained signals and a next-experiment suggestion.'
               },
               {
-                question: "Do I need programming knowledge to use SpectraAI?",
-                answer: "No programming knowledge is required. You can interact with SpectraAI using natural language, just like having a conversation with an expert.",
-                icon: <MessageCircle className="w-5 h-5 text-indigo-600" />
+                question: 'Is it a replacement for Mnova, TopSpin or ACD/Labs?',
+                answer: 'It doesn\'t have to be, from day one. The most credible strategy is to integrate with existing workflows and become the reasoning, ranking and evidence layer on top of the processing and acquisition already in use.'
               },
               {
-                question: "How accurate are the AI-powered analyses?",
-                answer: "Our AI models are trained on extensive spectral databases and validated by domain experts. While no analysis is perfect, we strive for high accuracy and provide confidence scores for our predictions.",
-                icon: <Zap className="w-5 h-5 text-indigo-600" />
+                question: 'Is it only for pure compounds?',
+                answer: 'No. The advantage grows precisely when there are impurities, multiple components or overlapping signals, even though the MVP starts from fairly well-controlled cases.'
               },
               {
-                question: "Is my data secure?",
-                answer: "Yes, we take data security seriously. All data is encrypted in transit and at rest. We never share your data with third parties without explicit consent.",
-                icon: <Shield className="w-5 h-5 text-indigo-600" />
+                question: 'Does it only work with proprietary libraries?',
+                answer: 'No. The distinctive value is combining experimental libraries, simulated libraries, the customer\'s internal databases and analogy-based retrieval.'
               },
               {
-                question: "How fast can I get results?",
-                answer: "Most analyses are completed within seconds. Complex analyses might take a few minutes, but you'll always get real-time updates on the progress.",
-                icon: <Clock className="w-5 h-5 text-indigo-600" />
+                question: 'Does it do verification or also unknown identification?',
+                answer: 'Both, but with different levels of risk and confidence. Verification is the fastest entry point; impurity ID and dereplication are the next step; open-world de novo is the path to build progressively.'
               },
               {
-                question: "What happens to my data after analysis?",
-                answer: "You retain full ownership of your data. We store it securely for your convenience but you can delete it at any time. We never use your data for training without explicit permission.",
-                icon: <Lock className="w-5 h-5 text-indigo-600" />
+                question: 'Does it only use NMR?',
+                answer: 'No. When available, molecular formula, exact mass, MS, IR and synthesis context increase ranking quality and the robustness of the conclusion.'
+              },
+              {
+                question: 'How do you avoid generative-model hallucinations?',
+                answer: 'Generating plausible candidates isn\'t enough: every hypothesis is weighted by retrieval, chemical constraints and forward validation against the observed data.'
+              },
+              {
+                question: 'How is confidence in a result assessed?',
+                answer: 'With an evidence score broken down by modality, a calibrated confidence and an explicit list of explained, unexplained and contradictory signals.'
+              },
+              {
+                question: 'Is it suitable for regulated labs?',
+                answer: 'It can become so, but it must be designed with audit trail, roles, versioning, a validation package and data-integrity requirements from the first enterprise releases.'
+              },
+              {
+                question: 'How long does it take to see value?',
+                answer: 'A lot depends on onboarding your data and libraries, but the fastest path is to start with verification/dereplication on high-frequency cases and already-available datasets.'
               }
             ].map((faq, index) => (
-              <div 
-                key={index} 
-                className="border border-slate-200 rounded-lg overflow-hidden animate-fade-in-up hover:border-indigo-200 transition-colors duration-200"
-                style={{ animationDelay: `${index * 100}ms` }}
+              <div
+                key={index}
+                className="border border-slate-200 rounded-lg overflow-hidden animate-fade-in-up hover:border-indigo-200 transition-colors duration-200 bg-white"
+                style={{ animationDelay: `${index * 60}ms` }}
               >
                 <button
                   className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors duration-200"
                   onClick={() => toggleFaq(index)}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="bg-indigo-50 p-2 rounded-lg">
-                      {faq.icon}
-                    </div>
-                    <span className="font-medium text-slate-800">{faq.question}</span>
-                  </div>
-                  <ChevronDown 
-                    className={`w-5 h-5 text-slate-500 transition-transform duration-200 ${
+                  <span className="font-medium text-slate-800 pr-4">{faq.question}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-slate-500 transition-transform duration-200 shrink-0 ${
                       openFaq === index ? 'transform rotate-180' : ''
                     }`}
                   />
                 </button>
-                <div 
+                <div
                   className={`px-6 py-4 bg-slate-50 transition-all duration-200 ${
                     openFaq === index ? 'block' : 'hidden'
                   }`}
@@ -608,36 +623,47 @@ function App() {
         </div>
       </section>
 
-
-
       {/* Final CTA Section */}
-      <section className="bg-white px-6 py-16 shadow-sm">
-        <div className="mx-auto max-w-7xl text-center">
-          <h2 className="text-3xl font-bold mb-8 animate-fade-in text-slate-900">
-            Ready to Transform Your Spectral Analysis?
+      <section id="beta" ref={sections.beta} className="bg-white px-6 py-20 shadow-sm">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 animate-fade-in text-slate-900">
+            Bring a real case into a pilot
           </h2>
-          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto animate-fade-in-up">
-            Join the beta today and experience the future of spectral data analysis. No coding required, just upload and ask.
+          <p className="text-lg text-slate-600 mb-10 max-w-2xl mx-auto animate-fade-in-up">
+            Evaluate the product on your own spectra and see how it integrates with your current stack.
+            We'll show you how the evidence score works on one of your cases.
           </p>
-          <FormComponent
-            actionUrl="https://app.99inbound.com/api/e/PxRbnqEW"
-            formData={formData}
-            isSubmitting={isSubmitting}
-            error={error}
-            handleInputChange={handleInputChange}
-          />
-          <div className="flex flex-wrap justify-center gap-6 mt-8 animate-fade-in-up">
+          {!success ? (
+            <FormComponent
+              actionUrl="https://app.99inbound.com/api/e/PxRbnqEW"
+              formData={formData}
+              isSubmitting={isSubmitting}
+              error={error}
+              handleInputChange={handleInputChange}
+            />
+          ) : (
+            <div className="max-w-md mx-auto text-center animate-fade-in-up">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6 shadow-lg">
+                <div className="flex items-center justify-center mb-4">
+                  <CheckCircle2 className="w-12 h-12 text-green-600" />
+                </div>
+                <h3 className="text-xl font-semibold text-green-800 mb-2">Thank you!</h3>
+                <p className="text-green-700">{successMessage}</p>
+              </div>
+            </div>
+          )}
+          <div className="flex flex-wrap justify-center gap-6 mt-10 animate-fade-in-up">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-              <span className="text-sm text-slate-600">Open source core</span>
+              <span className="text-sm text-slate-600">Vendor-agnostic</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-              <span className="text-sm text-slate-600">No spam</span>
+              <span className="text-sm text-slate-600">Pilot on your data</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
-              <span className="text-sm text-slate-600">Forever free for early users</span>
+              <span className="text-sm text-slate-600">Cloud or private deployment</span>
             </div>
           </div>
         </div>
@@ -646,12 +672,12 @@ function App() {
       {/* Footer */}
       <footer className="bg-white border-t border-slate-200 px-6 py-8">
         <div className="mx-auto max-w-7xl flex flex-col md:flex-row justify-between items-center">
-          <div 
+          <div
             className="flex items-center mb-4 md:mb-0 cursor-pointer hover:opacity-80 transition-opacity duration-200"
             onClick={scrollToTop}
           >
-            <img src={logo} alt="SpectraAI Logo" className="h-8 w-auto mr-2" />
-            <span className="text-2xl font-bold text-indigo-600">SpectraAI</span>
+            <img src={logo} alt={`${BRAND} Logo`} className="h-8 w-auto mr-2" />
+            <span className="text-2xl font-bold text-indigo-600">{BRAND}</span>
           </div>
           <div className="flex space-x-6">
             <a href="mailto:contact@rombo.ai" className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200">
@@ -668,5 +694,13 @@ function App() {
     </div>
   );
 }
+
+// Small inline icon wrapper to represent the evidence-score bar chart
+const BarChartIcon: React.FC = () => (
+  <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3v18h18" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 14h3v4H7zM12 9h3v9h-3zM17 5h3v13h-3z" />
+  </svg>
+);
 
 export default App;
