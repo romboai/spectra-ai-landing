@@ -24,7 +24,7 @@ import logo from '@assets/logo.svg';
 const BRAND = 'SpectraAI';
 
 // Make.com custom webhook for lead submissions
-const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/viqo3p206zx4qwt12a6d6mr1ob9kd8ru';
+const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/xlhmjh1moriuwsf2ky8pqvwgeh4agfgw';
 const MAKE_WEBHOOK_KEY = 'geTba5-bicxej-wacsep';
 
 // KPI / product metrics — easily editable values here
