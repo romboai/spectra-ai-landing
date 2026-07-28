@@ -23,6 +23,10 @@ import logo from '@assets/logo.svg';
 
 const BRAND = 'SpectraAI';
 
+// Make.com custom webhook for lead submissions
+const MAKE_WEBHOOK_URL = 'https://hook.eu2.make.com/viqo3p206zx4qwt12a6d6mr1ob9kd8ru';
+const MAKE_WEBHOOK_KEY = 'geTba5-bicxej-wacsep';
+
 // KPI / product metrics — easily editable values here
 const KPIS: { value: string; label: string; description: string }[] = [
   {
@@ -57,20 +61,32 @@ const KPIS: { value: string; label: string; description: string }[] = [
   }
 ];
 
+interface LeadFormData {
+  name: string;
+  email: string;
+  company: string;
+  role: string;
+  phone: string;
+  message: string;
+}
+
+const INPUT_CLASS =
+  'w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:border-indigo-300';
+
 const FormComponent: React.FC<{
-  actionUrl: string;
-  formData: { name: string; email: string };
+  onSubmit: (e: React.FormEvent) => void;
+  formData: LeadFormData;
   isSubmitting: boolean;
   error: string | null;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}> = ({ actionUrl, formData, isSubmitting, error, handleInputChange }) => (
-  <form action={actionUrl} method="POST" className="max-w-md mx-auto space-y-4 animate-fade-in-up">
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}> = ({ onSubmit, formData, isSubmitting, error, handleInputChange }) => (
+  <form onSubmit={onSubmit} className="max-w-md mx-auto space-y-4 animate-fade-in-up">
     <div className="relative">
       <input
         type="text"
         name="name"
-        placeholder="Full name"
-        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:border-indigo-300"
+        placeholder="Full name *"
+        className={INPUT_CLASS}
         value={formData.name}
         onChange={handleInputChange}
         disabled={isSubmitting}
@@ -81,12 +97,55 @@ const FormComponent: React.FC<{
       <input
         type="email"
         name="email"
-        placeholder="Work email"
-        className="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 hover:border-indigo-300"
+        placeholder="Work email *"
+        className={INPUT_CLASS}
         value={formData.email}
         onChange={handleInputChange}
         disabled={isSubmitting}
         required
+      />
+    </div>
+    <div className="grid sm:grid-cols-2 gap-4">
+      <input
+        type="text"
+        name="company"
+        placeholder="Company *"
+        className={INPUT_CLASS}
+        value={formData.company}
+        onChange={handleInputChange}
+        disabled={isSubmitting}
+        required
+      />
+      <input
+        type="text"
+        name="role"
+        placeholder="Role"
+        className={INPUT_CLASS}
+        value={formData.role}
+        onChange={handleInputChange}
+        disabled={isSubmitting}
+      />
+    </div>
+    <div className="relative">
+      <input
+        type="tel"
+        name="phone"
+        placeholder="Phone"
+        className={INPUT_CLASS}
+        value={formData.phone}
+        onChange={handleInputChange}
+        disabled={isSubmitting}
+      />
+    </div>
+    <div className="relative">
+      <textarea
+        name="message"
+        placeholder="What would you like to identify? (optional)"
+        rows={3}
+        className={`${INPUT_CLASS} resize-none`}
+        value={formData.message}
+        onChange={handleInputChange}
+        disabled={isSubmitting}
       />
     </div>
     <button
@@ -111,9 +170,13 @@ const FormComponent: React.FC<{
 );
 
 function App() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LeadFormData>({
     name: '',
-    email: ''
+    email: '',
+    company: '',
+    role: '',
+    phone: '',
+    message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -196,15 +259,7 @@ function App() {
     };
   }, [success]);
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('success')) {
-      const formEvent = new Event('submit', { bubbles: true, cancelable: true }) as unknown as React.FormEvent<HTMLFormElement>;
-      handleSubmit(formEvent);
-    }
-  }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -220,11 +275,33 @@ function App() {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
-    console.log('Form submitted with data:', formData);
-    setSuccess(true);
-    setSuccessMessage('Thanks! We will reach out shortly to set up your demo or pilot.');
-    setFormData({ name: '', email: '' });
-    setIsSubmitting(false);
+    try {
+      const response = await fetch(MAKE_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'x-make-apikey': MAKE_WEBHOOK_KEY,
+        },
+        body: new URLSearchParams({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          role: formData.role,
+          phone: formData.phone,
+          message: formData.message,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      setSuccess(true);
+      setFormData({ name: '', email: '', company: '', role: '', phone: '', message: '' });
+    } catch (err) {
+      console.error('Form submission failed:', err);
+      setError('Something went wrong. Please try again or email us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!isLoaded) {
@@ -337,7 +414,7 @@ function App() {
 
             {!success ? (
               <FormComponent
-                actionUrl="https://app.99inbound.com/api/e/PxRbnqEW"
+                onSubmit={handleSubmit}
                 formData={formData}
                 isSubmitting={isSubmitting}
                 error={error}
@@ -635,7 +712,7 @@ function App() {
           </p>
           {!success ? (
             <FormComponent
-              actionUrl="https://app.99inbound.com/api/e/PxRbnqEW"
+              onSubmit={handleSubmit}
               formData={formData}
               isSubmitting={isSubmitting}
               error={error}
